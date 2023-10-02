@@ -19,25 +19,44 @@ public class WorkerController : ControllerBase
 
     [HttpGet("profile")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Worker")]
-    public async Task<ActionResult<ProfileDTO>> GetProfile(string email) => Ok(await _service.GetWorkerProfile(email));
+    public async Task<ActionResult<ProfileDTO>> GetProfile(string email)
+    {
+        return Ok(await _service.GetWorkerProfile(email));
+    }
 
     [HttpGet("seeActiveRequests")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Worker")]
-    public ActionResult<IEnumerable<RequestDTO>> GetActiveRequests(string email) => Ok(_service.SeeActiveRequests(email));
+    public ActionResult<IEnumerable<RequestDTO>> GetActiveRequests(string email)
+    {
+        return Ok(_service.SeeActiveRequests(email));
+    }
 
     [HttpGet("seeInactiveRequests")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Worker")]
-    public ActionResult<IEnumerable<RequestDTO>> GetInactiveRequests(string email) => Ok(_service.SeeInactiveRequests(email));
+    public ActionResult<IEnumerable<RequestDTO>> GetInactiveRequests(string email)
+    {
+        return Ok(_service.SeeInactiveRequests(email));
+    }
 
     [HttpGet("seeCompletedRequests")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Worker")]
-    public ActionResult<IEnumerable<RequestDTO>> GetCompletedRequests(string email) => Ok(_service.SeeCompletedTasks(email));
+    public ActionResult<IEnumerable<RequestDTO>> GetCompletedRequests(string email)
+    {
+        return Ok(_service.SeeCompletedTasks(email));
+    }
 
     [HttpPost("completeTask")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Worker")]
-    public async Task<ActionResult<bool>> CompleteTask([FromBody] SetWorkDoneRequest request) => Ok(await _service.SetWorkDoneAsync(request));
+    public async Task<ActionResult<bool>> CompleteTask([FromBody] SetWorkDoneRequest request)
+    {
+        return Ok(await _service.SetWorkDoneAsync(request));
+    }
 
     [HttpPost("newCategory")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Worker")]
-    public async Task<ActionResult<bool>> RegisterInNewCategory([FromBody] CategoryRegisterRequest request) => Ok(await _service.RegisterInNewCategory(request));
+    public async Task<ActionResult<bool>> RegisterInNewCategory([FromBody] CategoryRegisterRequest request)
+    {
+        return Ok(await _service.RegisterInNewCategory(request));
+    }
 }
+

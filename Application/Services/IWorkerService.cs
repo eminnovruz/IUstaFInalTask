@@ -9,13 +9,13 @@ namespace Application.Services
 {
     public interface IWorkerService
     {
-        Task<ProfileDTO?> GetWorkerProfile(string email);
-        Task<bool> AcceptWorkAsync(AcceptWorkRequest request);
         Task<bool> RejectWorkAsync(RejectWorkRequest request);
+        Task<bool> AcceptWorkAsync(AcceptWorkRequest request);
         Task<bool> SetWorkDoneAsync(SetWorkDoneRequest request);
-        Task<bool> RegisterInNewCategory(CategoryRegisterRequest request);
+        Task<ProfileDTO?> GetWorkerProfile(string email);
         IEnumerable<RequestDTO> SeeInactiveRequests(string email);
         IEnumerable<RequestDTO> SeeActiveRequests(string email);
+        Task<bool> RegisterInNewCategory(CategoryRegisterRequest request);
         IEnumerable<RequestDTO> SeeCompletedTasks(string email);
     }
 }

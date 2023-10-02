@@ -11,7 +11,7 @@ namespace API.Controllers;
 [ApiController]
 public class AdminController : ControllerBase
 {
-   private readonly IAdminService _service;
+    private readonly IAdminService _service;
 
     public AdminController(IAdminService service)
     {
@@ -19,22 +19,43 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("getStatistics")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
-    public ActionResult<Statistics> GetStatistics() => _service.GetStatistics();
+    [Authorize(AuthenticationSchemes ="Bearer",Roles = "Admin")]
+    public ActionResult<Statistics> GetStatistics()
+    {
+        var statistics = _service.GetStatistics();
+        return Ok(statistics);
+    }
 
     [HttpGet("showAllCategories")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
-    public ActionResult<IEnumerable<CategoryShowDTO>> GetAllCategories() => Ok(_service.GetAllCategories());
+    public ActionResult<IEnumerable<CategoryShowDTO>> GetAllCategories()
+    {
+        var categories = _service.GetAllCategories();
+        return Ok(categories);
+    }
 
     [HttpPost("addAdmin")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
-    public async Task<ActionResult<bool>> AddAdmin([FromBody] LoginRequest model) => await _service.AddNewAdmin(model);
+    public async Task<ActionResult<bool>> AddAdmin([FromBody] LoginRequest model)
+    {
+        var result = await _service.AddNewAdmin(model);
+        return Ok(result);
+    }
 
     [HttpPut("updateCategory")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
-    public async Task<ActionResult<bool>> UpdateCategory([FromBody] CategoryUpdateDTO model) => await _service.UpdateCategoryAsync(model);
+    public async Task<ActionResult<bool>> UpdateCategory([FromBody] CategoryUpdateDTO model)
+    {
+        var result = await _service.UpdateCategoryAsync(model);
+        return Ok(result);
+    }
 
     [HttpPost("addCategory")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
-    public async Task<ActionResult<bool>> AddCategory([FromBody] CategoryDTO model) => await _service.AddCategoryAsync(model);
+    public async Task<ActionResult<bool>> AddCategory([FromBody] CategoryDTO model)
+    {
+        var result = await _service.AddCategoryAsync(model);
+        return Ok(result);
+    }
 }
+

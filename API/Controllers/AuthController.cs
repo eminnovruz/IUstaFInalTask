@@ -14,13 +14,19 @@ namespace API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly IWorkerCategoryService _workerCategoryService;
     private readonly IJWTService _jwtService;
+    private readonly SignInManager<User> _signInManager;
+    private readonly IWorkerCategoryService _workerCategoryService;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IMailService _mailService;
 
-    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, IJWTService jwtService, IWorkerCategoryService workerCategoryService, IMailService mailService)
+    public AuthController(
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        RoleManager<IdentityRole> roleManager,
+        IJWTService jwtService,
+        IWorkerCategoryService workerCategoryService,
+        IMailService mailService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -50,7 +56,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult> Register(RegisterRequest request)
+    public async Task<IActionResult> Register(RegisterRequest request)
     {
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser is not null)
@@ -64,6 +70,7 @@ public class AuthController : ControllerBase
             Email = request.Email,
             RefreshToken = Guid.NewGuid().ToString("N").ToLower(),
         };
+
         var result = await _userManager.CreateAsync(user, request.Password);
 
         if (!result.Succeeded)
@@ -95,50 +102,54 @@ public class AuthController : ControllerBase
         else
             await _userManager.AddToRoleAsync(user, "User");
 
-        return Ok();
+        return Ok("Registration successful"); 
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<AuthTokenDTO>> Login(LoginRequest request)
+    public async Task<IActionResult> Login(LoginRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user is null)
         {
-            return BadRequest();
+            return BadRequest("Invalid email or password");
         }
         if (await _userManager.IsEmailConfirmedAsync(user))
         {
             var canSignIn = await _signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, false);
 
             if (!canSignIn.Succeeded)
-                return BadRequest();
+                return BadRequest("Invalid email or password");
 
-            return await GenerateToken(user);
+            var token = await GenerateToken(user);
+            return Ok(token);
         }
-        return Unauthorized();
+        return Unauthorized("Email not confirmed");
     }
 
     [HttpPost("refresh")]
-    public async Task<ActionResult<AuthTokenDTO>> RefreshToken([FromBody] RefreshTokenRequest request)
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(e => e.RefreshToken == request.RefreshToken);
 
         if (user is null)
-            return Unauthorized();
+            return Unauthorized("Invalid refresh token");
 
-        return await GenerateToken(user);
+        var token = await GenerateToken(user);
+        return Ok(token); 
     }
 
-    [HttpGet]
-    [ApiExplorerSettings(IgnoreApi = true)]
-    public async Task<ActionResult> ConfirmEmail(string email, string token)
+    [HttpGet("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail(string email, string token)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user is not null)
         {
             var result = await _userManager.ConfirmEmailAsync(user, token);
-            return Ok();
+            if (result.Succeeded)
+                return Ok("Email confirmed");
+            else
+                return BadRequest("Email confirmation failed");
         }
-        return BadRequest();
+        return BadRequest("User not found");
     }
 }

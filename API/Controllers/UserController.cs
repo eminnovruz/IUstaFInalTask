@@ -19,23 +19,38 @@ public class UserController : Controller
 
     [HttpGet("getAllWorkers")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-    public async Task<ActionResult<IEnumerable<WorkerDTO>>> GetAllWorkers() => Ok(await _service.GetAllWorkersAsync());
+    public async Task<ActionResult<IEnumerable<WorkerDTO>>> GetAllWorkers()
+    {
+        return Ok(await _service.GetAllWorkersAsync());
+    }
 
     [HttpGet("seeCategories")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-    public ActionResult<IEnumerable<CategoryShowDTO>> SeeAllCategories() => Ok(_service.SeeAllCategories());
+    public ActionResult<IEnumerable<CategoryShowDTO>> SeeAllCategories()
+    {
+        return Ok(_service.SeeAllCategories());
+    }
 
     [HttpGet("getWorkersByRating")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-    public async Task<ActionResult<IEnumerable<WorkerDTO>>> GetWorkersByRating(bool Descending) => Ok(await _service.GetWorkersByRatingAsync(Descending));
+    public async Task<ActionResult<IEnumerable<WorkerDTO>>> GetWorkersByRating(bool Descending)
+    {
+        return Ok(await _service.GetWorkersByRatingAsync(Descending));
+    }
 
     [HttpGet("getWorkersByCategory")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-    public ActionResult<IEnumerable<WorkerDTO>> GetWorkersByCategory(string categoryId) => Ok(_service.GetWorkersByCategory(categoryId));
+    public ActionResult<IEnumerable<WorkerDTO>> GetWorkersByCategory(string categoryId)
+    {
+        return Ok(_service.GetWorkersByCategory(categoryId));
+    }
 
     [HttpGet("seeMyRequests")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-    public ActionResult<UserRequestDTO> GetAllRequests(string userEmail) => Ok(_service.GetUsersRequests(userEmail));
+    public ActionResult<UserRequestDTO> GetAllRequests(string userEmail)
+    {
+        return Ok(_service.GetUsersRequests(userEmail));
+    }
 
     [HttpPost("rateWork")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
@@ -43,8 +58,10 @@ public class UserController : Controller
     {
         var result = await _service.RateWorkDoneAsync(model);
 
-        if(!result)
+        if (!result)
+        {
             return BadRequest(result);
+        }
 
         return result;
     }
@@ -55,9 +72,12 @@ public class UserController : Controller
     {
         var result = await _service.SendWorkRequest(request);
 
-        if(!result)
+        if (!result)
+        {
             return BadRequest(request);
+        }
 
         return result;
     }
+
 }
